@@ -1,0 +1,342 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[english]{babel}
+% \usepackage[portuguese]{babel}
+%\usepackage[T1]{fontenc}
+%\usepackage[latin1]{inputenc}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{float}
+
+\usepackage{color}
+\usepackage{listings}
+
+\oddsidemargin 0.22in
+\textwidth 5.8in
+
+\usepackage[skins]{tcolorbox}
+\definecolor{AB}{rgb}{0,0.3961,0.7412}
+\usepackage[bookmarksnumbered=true]{hyperref}
+\hypersetup{
+     colorlinks = true,
+     linkcolor = AB,
+     anchorcolor = AB,
+     citecolor = AB,
+     filecolor = AB,
+     urlcolor = AB
+}
+
+\renewcommand{\lstlistingname}{Listado}
+\lstset{
+  language=Python,
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color{gray!10},
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!60!black},
+  stringstyle=\color{orange},
+  frame=single,
+  breaklines=true
+}
+
+\renewcommand\labelitemi{$\leadsto$}
+\usepackage{footmisc}
+
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=*}
+\setlist[enumerate]{leftmargin=*}
+\renewcommand{\labelitemi}{$\circ$}
+
+\usepackage{scrextend}
+\deffootnote[1em]{1em}{1em}{\textsuperscript{\thefootnotemark}\,}
+
+\usepackage{titlesec}
+\titleformat{\section}{\fontsize{13}{14}\sc}{\thesection}{1em}{}[]
+\titleformat{\subsection}{\fontsize{11}{12}\sc}{\thesubsection}{1em}{}[]
+
+ \setlength{\parindent}{0pt}
+
+\usepackage{tocloft}
+\renewcommand{\cfttoctitlefont}{\sc}
+\renewcommand{\cftsecfont}{\sc}
+\renewcommand{\cftsubsecfont}{\sc}
+
+\begin{document}
+
+%%%%%%%%%% Cover page %%%%%%%%%%%
+{\Large \noindent \sc Project Work - Sistema Mecânico} \\ % Alterado para um título genérico
+
+\begin{spacing}{1.5}
+{\large\sc \noindent Nome completo:}\\
+% {\large\sc \noindent Nome completo:}\\
+
+{\large\sc \noindent Numero de matricula: }
+% {\large\sc \noindent Nome completo:}\\
+\end{spacing}
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{\sc Tarefa 1: Modelagem}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection*{\sc Questão 1.1}
+
+\subsubsection*{\sc Solução}
+
+Variáveis de estado: 
+\[
+    \textbf{x(t)} = 
+    [x_{1}(t), x_{2}(t), x_{3}(t)]
+    =
+    [x_{1}(t), x_{2}(t), \theta(t)]
+\]
+
+Vetor de entradas:
+\[
+    \textbf{u(t)} = 
+    [u_{1}(t), u_{2}(t)]
+    =
+    [v(t), \delta(t)]
+\]
+
+Vetor de saídas:
+\[
+    \textbf{y(t)} = [x_{1}(t), x_{2}(t)]
+\]
+
+Espaço de estados do sistema não linear:
+\[
+    \dot{\textbf{x}} = f(\textbf{x(t)}, \textbf{u(t)})
+    =
+    \begin{bmatrix}
+        f_1(x_1, x_2, x_3, u_1,u_2) \\
+        f_2(x_1, x_2, x_3, u_1,u_2) \\
+        f_3(x_1, x_2, x_3, u_1,u_2)
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \dot{x_1} \\
+        \dot{x_2} \\
+        \dot{x_3}
+    \end{bmatrix}
+\]
+\[
+    \textbf{y} = g(\textbf{x(t)}, \textbf{{u(t)}}) = 
+    \begin{bmatrix}
+        x_1 \\
+        x_2
+    \end{bmatrix}
+\]
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{imagens/veiculo_simplificado.png}
+    \caption{Veículo simplificado.}
+    \label{fig:meu_diagrama}
+\end{figure}
+
+Para $x_1$ e $x_2$ que são as posições no eixo horizontal e vertical, respectivamente, suas derivadas são as componentes da velocidade do centro de massa do veículo. Para $\theta$ que é a orientação do veículo, temos que sua derivada é a velocidade angular de rotação $\omega$.
+
+\[
+    \dot{\textbf{x}} =
+    \begin{bmatrix}
+        \dot{x_1} \\
+        \dot{x_2} \\
+        \dot{\theta}
+    \end{bmatrix} 
+    =
+    \begin{bmatrix}
+        v_{x1} \\
+        v_{x2} \\
+        \omega
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        v \cdot \cos{(\alpha + \theta)} \\
+        v \cdot \sin{(\alpha + \theta)} \\
+        \dfrac{v}{R}
+    \end{bmatrix}
+\]
+
+\begin{itemize}
+    \item $v$: magnitude da velocidade do veículo 
+    \item $v_{x1}$: componente horizontal da velocidade
+    \item $v_{x2}$: componente vertical da velocidade
+    \item $\omega$: velocidade angular de rotação
+    \item $R$: raio da rotação
+    \item $\alpha$: ângulo de deslizamento
+    \item $\alpha + \theta$: ângulo de direção da velocidade 
+\end{itemize}
+
+Faremos algumas manipulações trigonométricas nas expressões atuais de $\dot{\textbf{x}}$ com o objetivo de deixá-las em função dos parâmetros das variáveis de estado e de entrada do sistema. Observano a Figura~\ref{fig:meu_diagrama}, temos que:
+\[
+    \tan(\delta) = \frac{b}{L'}
+\]
+\[
+    L' = \frac{b}{\tan(\delta)}
+\]
+Onde $b$ é o comprimenro do veículo. Além disso, observamos:
+
+\[
+    \tan(\alpha) = \frac{a}{L'}
+\] 
+\[
+    \tan(\alpha) = \frac{a}{\frac{b}{\tan(\delta)}} =\frac{a \cdot \tan(\delta)}{b}
+\]
+\[
+    \alpha = \arctan(\frac{a \cdot \tan(\delta)}{b})
+\]
+Onde $a$ é o comprimento do centro de massa até a roda inferior. Agora vamos analisar o raio da rotação:
+
+\[
+    \sin{(\alpha)} = \frac{a}{R}
+\]
+\[
+    R = \frac{a}{\sin{(\alpha)}}
+\]
+\[
+    R = \frac{a}{\sin{(\arctan(\frac{a \cdot \tan(\delta)}{b}))}}
+\]
+
+Agora, conhecemos todas as expressões do espaço de estados encontrado mais acima com os parâmetros que desejamos. Dessa forma, temos:
+
+\[
+    \dot{x_1} = v \cdot \cos{(\alpha + \theta)}
+\]
+\[
+    \dot{x_1} = v \cdot \sin{(\alpha + \theta)}
+\]
+\[
+    \dot{\theta} = \dfrac{v}{R}
+\]
+Substituindo $\alpha$ e R:
+
+\[  
+    \dot{x_1} = v \cdot \cos{(\arctan(\frac{a \cdot \tan(\delta)}{b}) + \theta)}
+\]
+\[
+    \dot{x_2} = v \cdot \sin{(\arctan(\frac{a \cdot \tan(\delta)}{b}) + \theta)}
+\]
+\[
+    \dot{\theta} = \frac{v \cdot \sin{(\arctan(\frac{a \cdot \tan(\delta)}{b})}}{a}
+\]
+
+Reescrevendo as equações utilizando o vetor de estado e o vetor de entrada:
+
+\[  
+    \dot{x_1} = u_1 \cdot \cos{(\arctan(\frac{a \cdot \tan(u_2)}{b}) + x_3)}
+\]
+\[
+    \dot{x_2} = u_1 \cdot \sin{(\arctan(\frac{a \cdot \tan(u_2)}{b}) + x_3)}
+\]
+\[
+    \dot{x_3} = \frac{u_1 \cdot \sin{(\arctan(\frac{a \cdot \tan(u_2)}{b})}}{a}
+\]
+
+\begin{lstlisting}[caption = {Código da Questão 1.1}, label={code:t1q1}]
+Codigo aqui!
+\end{lstlisting}
+
+\subsection*{\sc Questão 1.2}
+
+\subsubsection*{\sc Solução}
+
+\begin{lstlisting}[caption = {Código da Questão 1.2}, label={code:t1q2}]
+Codigo aqui!
+\end{lstlisting}
+
+\subsection*{\sc Questão 1.3}
+
+\subsubsection*{\sc Solução}
+
+\begin{lstlisting}[caption = {Código da Questão 1.3}, label={code:t1q3}]
+Codigo aqui!
+\end{lstlisting}
+
+\subsection*{\sc Questão 1.4}
+
+\subsubsection*{\sc Solução}
+
+\begin{lstlisting}[caption = {Código da Questão 1.4}, label={code:t1q4}]
+Codigo aqui!
+\end{lstlisting}
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{\sc Tarefa 2: Análise Dinâmica}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection*{\sc Questão 2.1}
+
+\subsubsection*{\sc Solução}
+
+\begin{lstlisting}[caption = {Código da Questão 2.1}, label={code:t2q1}]
+Codigo aqui!
+\end{lstlisting}
+
+\subsection*{\sc Questão 2.2}
+
+\subsubsection*{\sc Solução}
+
+\begin{lstlisting}[caption = {Código da Questão 2.2}, label={code:t2q2}]
+Codigo aqui!
+\end{lstlisting}
+
+\subsection*{\sc Questão 2.3}
+
+\subsubsection*{\sc Solução}
+
+\begin{lstlisting}[caption = {Código da Questão 2.3}, label={code:t2q3}]
+Codigo aqui!
+\end{lstlisting}
+
+\subsection*{\sc Questão 2.4}
+
+\subsubsection*{\sc Solução}
+
+\begin{lstlisting}[caption = {Código da Questão 2.4}, label={code:t2q4}]
+Codigo aqui!
+\end{lstlisting}
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{\sc Tarefa 3: Controle do Sistema Dinâmico}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection*{\sc Questão 3.1}
+
+\subsubsection*{\sc Solução}
+
+\begin{lstlisting}[caption = {Código da Questão 3.1}, label={code:t3q1}]
+Codigo aqui!
+\end{lstlisting}
+
+\subsection*{\sc Questão 3.2}
+
+\subsubsection*{\sc Solução}
+
+\begin{lstlisting}[caption = {Código da Questão 3.2}, label={code:t3q2}]
+Codigo aqui!
+\end{lstlisting}
+
+\subsection*{\sc Questão 3.3}
+
+\subsubsection*{\sc Solução}
+
+\begin{lstlisting}[caption = {Código da Questão 3.3}, label={code:t3q3}]
+Codigo aqui!
+\end{lstlisting}
+
+\subsection*{\sc Questão 3.4}
+
+\subsubsection*{\sc Solução}
+
+\begin{lstlisting}[caption = {Código da Questão 3.4}, label={code:t3q4}]
+Codigo aqui!
+\end{lstlisting}
+
+
+\end{document}
