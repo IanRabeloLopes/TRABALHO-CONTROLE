@@ -1,0 +1,44 @@
+name: Compilar Relatório LaTeX
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build_latex:
+    runs-on: ubuntu-latest
+    
+    # Adicione esta seção de permissões para permitir que a Action faça commit
+    permissions:
+      contents: write
+
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v4
+
+      - name: Cache TeX Live packages
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/texlive/
+          key: ${{ runner.os }}-texlive-${{ hashFiles('**/*.tex') }}
+          restore-keys: |
+            ${{ runner.os }}-texlive-
+
+      - name: Compile LaTeX document
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex # Mude se o seu arquivo principal tiver outro nome
+
+      # NOVO PASSO: FAZ O COMMIT DO PDF GERADO
+      - name: Commit do arquivo PDF
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          # Mensagem do commit que aparecerá no histórico
+          commit_message: 'chore: Atualiza o PDF compilado [bot]'
+          
+          # Padrão do arquivo a ser commitado. Mude 'main.pdf' se o seu PDF tiver outro nome.
+          file_pattern: main.pdf
+          
+          # Nome e email do "usuário" que fará o commit (o robô)
+          commit_user_name: GitHub Actions Bot
+          commit_user_email: actions@github.com
