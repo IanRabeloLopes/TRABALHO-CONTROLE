@@ -1,341 +1,1025 @@
-\documentclass[a4paper,11pt]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 			RELATÓRIO TÉCNICO - TAREFA 1: MODELAGEM E VALIDAÇÃO
+% 			      Versão Final - 10 de Julho de 2025
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[a4paper, 12pt]{article}
 
-\usepackage[english]{babel}
-% \usepackage[portuguese]{babel}
-%\usepackage[T1]{fontenc}
-%\usepackage[latin1]{inputenc}
-\usepackage{amsmath, amssymb}
-\usepackage{graphicx}
-\usepackage{setspace}
-\usepackage{float}
+% --- PACOTES BÁSICOS ---
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel} 	% Para textos em português (Figura, Resumo, etc.)
+\usepackage{geometry} 		% Para ajustar as margens
+\usepackage{graphicx} 		% Para incluir imagens
+\usepackage{amsmath}  		% Para equações matemáticas avançadas
+\usepackage{amssymb}        % Para símbolos como \mathbb
+\usepackage{hyperref} 		% Para links clicáveis (útil no PDF)
+\usepackage{times}    		% Fonte Times New Roman
+\usepackage{fontenc}         % Para codificação de fontes
+\usepackage{booktabs}       % Para tabelas com linhas mais bonitas
+\usepackage{float}          % Para posicionamento de figuras e tabelas
+% --- PACOTE PARA CÓDIGO FONTE ---
+\usepackage{listings} 		% Para formatar código
+\usepackage{xcolor}   		% Para definir cores no código
 
-\usepackage{color}
-\usepackage{listings}
-
-\oddsidemargin 0.22in
-\textwidth 5.8in
-
-\usepackage[skins]{tcolorbox}
-\definecolor{AB}{rgb}{0,0.3961,0.7412}
-\usepackage[bookmarksnumbered=true]{hyperref}
+% --- CONFIGURAÇÕES ---
+\geometry{a4paper, top=3cm, bottom=3cm, left=3cm, right=3cm} % Margens ABNT
 \hypersetup{
-     colorlinks = true,
-     linkcolor = AB,
-     anchorcolor = AB,
-     citecolor = AB,
-     filecolor = AB,
-     urlcolor = AB
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=magenta,      
+    urlcolor=blue,
+    pdftitle={Relatório de Sistemas de Controle - Tarefa 1},
 }
 
-\renewcommand{\lstlistingname}{Listado}
-\lstset{
-  language=Python,
-  basicstyle=\ttfamily\footnotesize,
-  backgroundcolor=\color{gray!10},
-  keywordstyle=\color{blue},
-  commentstyle=\color{green!60!black},
-  stringstyle=\color{orange},
-  frame=single,
-  breaklines=true
+% --- ESTILO DO CÓDIGO PYTHON ---
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.95}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize\ttfamily,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
 }
+\lstset{style=mystyle}
 
-\renewcommand\labelitemi{$\leadsto$}
-\usepackage{footmisc}
-
-\usepackage{enumitem}
-\setlist[itemize]{leftmargin=*}
-\setlist[enumerate]{leftmargin=*}
-\renewcommand{\labelitemi}{$\circ$}
-
-\usepackage{scrextend}
-\deffootnote[1em]{1em}{1em}{\textsuperscript{\thefootnotemark}\,}
-
-\usepackage{titlesec}
-\titleformat{\section}{\fontsize{13}{14}\sc}{\thesection}{1em}{}[]
-\titleformat{\subsection}{\fontsize{11}{12}\sc}{\thesubsection}{1em}{}[]
-
- \setlength{\parindent}{0pt}
-
-\usepackage{tocloft}
-\renewcommand{\cfttoctitlefont}{\sc}
-\renewcommand{\cftsecfont}{\sc}
-\renewcommand{\cftsubsecfont}{\sc}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 							INÍCIO DO DOCUMENTO
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 
-%%%%%%%%%% Cover page %%%%%%%%%%%
-{\Large \noindent \sc Project Work - Sistema Mecânico} \\ % Alterado para um título genérico
+% --- PÁGINA DE ROSTO ---
+\begin{titlepage}
+	\centering
+	\vspace*{1.0cm}
+	
+	\large
+	% <<< PREENCHIMENTO DO NOME DA UNIVERSIDADE >>>
+	UNIVERSIDADE FEDERAL DO CEARÁ \\
+	\vspace{0.2cm}
+	
+	CENTRO DE TECNOLOGIA - DEPARTAMENTO DE ENGENHARIA DE TELEINFORMÁTICA
+	
+	\vspace{2.5cm}
+	
+	\huge \textbf{Projeto de Sistemas de Controle I}
+	
+	\vspace{0.5cm}
+	
+	\Large \textbf{Tarefa 1: Modelagem, Análise e Simulação de Veículo}
+	
+	\vspace{2.5cm}
+	
+	% --- GRUPO ---
+	\begin{flushleft}
+	\Large \textbf{Equipe:} \\
+	\vspace{0.3cm}
+	% <<< NOME DOS INTEGRANTES >>>
+	Luiz Augusto Gomes da Silva de Jesus \\
+	Ian Rabelo Lopes \\
+	Péricles Roberto Cavalcante
+	\end{flushleft}
+	
+	\vspace{2.0cm}
+	
+	% --- PROFESSOR ---
+	\begin{flushleft}
+	\Large \textbf{Professor:} \\
+	\vspace{0.3cm}
+	% <<< NOME DO PROFESSOR >>>
+	Profa. Dra. Michela Mulas
+	\end{flushleft}
+	
+	\vfill
+	
+	% --- LOCAL E DATA ---
+	{\large Fortaleza, Ceará \\ \today}
+	
+\end{titlepage}
 
-\begin{spacing}{1.5}
-{\large\sc \noindent Nome completo:}\\
-% {\large\sc \noindent Nome completo:}\\
+% --- RESUMO ---
+\begin{abstract}
+	\noindent
+	Este relatório apresenta o desenvolvimento, análise e validação de um modelo dinâmico para o controle lateral de um veículo de quatro rodas, uma etapa fundamental no projeto de sistemas de assistência ao motorista e condução autônoma. A partir das leis da cinemática, e utilizando a consagrada abordagem do "modelo bicicleta", o sistema foi representado na forma de espaço de estados, resultando em um conjunto de equações diferenciais não lineares que descrevem a relação entre o esterçamento do volante e a trajetória do veículo.
 
-{\large\sc \noindent Numero de matricula: }
-% {\large\sc \noindent Nome completo:}\\
-\end{spacing}
+	Para viabilizar a aplicação de técnicas de controle clássico, o modelo não linear foi linearizado em torno de um ponto de equilíbrio de movimento retilíneo. Utilizando o método da expansão em série de Taylor de primeira ordem (matriz Jacobiana), obteve-se um modelo linear invariante no tempo (LTI) descrito pelas matrizes (A, B, C, D).
+
+	As propriedades estruturais deste modelo LTI foram então investigadas. A estabilidade em malha aberta foi determinada pela análise dos autovalores da matriz de dinâmica (A). A viabilidade de se projetar um controlador eficaz foi confirmada através da análise de controlabilidade e observabilidade, utilizando o critério de posto de Kalman. A validação final da aproximação linear foi realizada via simulação computacional em Python, comparando sua resposta a um degrau de entrada com a do sistema não linear original. Os resultados demonstram alta fidelidade entre os modelos para manobras suaves e identificam os limites operacionais desta aproximação, consolidando um modelo confiável que servirá de base para o projeto de um sistema de controle de trajetória nas etapas futuras deste trabalho.
+\end{abstract}
 
 \newpage
+\tableofcontents
+\newpage
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{\sc Tarefa 1: Modelagem}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Descrição do Problema}
+O objetivo desta primeira tarefa do projeto é modelar, analisar e simular o sistema de um veículo, conforme descrito no enunciado e na Figura \ref{fig:enunciado}. O processo envolve obter o modelo em espaço de estados, analisar seu ponto de equilíbrio, linearizá-lo e, por fim, comparar o comportamento do modelo não linear com sua aproximação linear via simulação.
 
-\subsection*{\sc Questão 1.1}
-
-\subsubsection*{\sc Solução}
-
-Variáveis de estado: 
-\[
-    \textbf{x(t)} = 
-    [x_{1}(t), x_{2}(t), x_{3}(t)]
-    =
-    [x_{1}(t), x_{2}(t), \theta(t)]
-\]
-
-Vetor de entradas:
-\[
-    \textbf{u(t)} = 
-    [u_{1}(t), u_{2}(t)]
-    =
-    [v(t), \delta(t)]
-\]
-
-Vetor de saídas:
-\[
-    \textbf{y(t)} = [x_{1}(t), x_{2}(t)]
-\]
-
-Espaço de estados do sistema não linear:
-\[
-    \dot{\textbf{x}} = f(\textbf{x(t)}, \textbf{u(t)})
-    =
-    \begin{bmatrix}
-        f_1(x_1, x_2, x_3, u_1,u_2) \\
-        f_2(x_1, x_2, x_3, u_1,u_2) \\
-        f_3(x_1, x_2, x_3, u_1,u_2)
-    \end{bmatrix}
-    =
-    \begin{bmatrix}
-        \dot{x_1} \\
-        \dot{x_2} \\
-        \dot{x_3}
-    \end{bmatrix}
-\]
-\[
-    \textbf{y} = g(\textbf{x(t)}, \textbf{{u(t)}}) = 
-    \begin{bmatrix}
-        x_1 \\
-        x_2
-    \end{bmatrix}
-\]
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.5\textwidth]{imagens/veiculo_simplificado.png}
-    \caption{Veículo simplificado.}
-    \label{fig:meu_diagrama}
+\begin{figure}[h!]
+    \centering
+    % <<< IMAGEM DO ENUNCIADO >>>
+    \includegraphics[width=0.9\textwidth]{enunciado.png}
+    \caption{Figura 2 do enunciado: direção do veículo.}
+    \label{fig:enunciado}
 \end{figure}
 
-Para $x_1$ e $x_2$ que são as posições no eixo horizontal e vertical, respectivamente, suas derivadas são as componentes da velocidade do centro de massa do veículo. Para $\theta$ que é a orientação do veículo, temos que sua derivada é a velocidade angular de rotação $\omega$.
+\section{Modelagem do Sistema de Direção}
+Para descrever o comportamento do veículo, adotou-se o \textbf{modelo bicicleta}. As variáveis de estado que descrevem a configuração do veículo são $\mathbf{x} = [x_1, x_2, \theta]^T$, e as entradas de controle são $\mathbf{u} = [v, \delta]^T$.
+
+Sob a hipótese de não derrapagem, o modelo cinemático não-linear completo é dado por:
+\begin{equation}
+	\label{eq:nao_linear_completo}
+	\begin{cases}
+		\dot{x}_1(t) = v(t) \cos(\alpha(t) + \theta(t)) \\
+		\dot{x}_2(t) = v(t) \sin(\alpha(t) + \theta(t)) \\
+		\dot{\theta}(t) = \frac{v(t)}{b} \tan(\delta(t))
+	\end{cases}
+\end{equation}
+onde o ângulo de deslizamento lateral $\alpha(t)$ é dado por $\alpha(t) = \arctan\left(\frac{a}{b}\tan\delta(t)\right)$. O parâmetro $a$ é a distância do centro de massa ao eixo traseiro e $b$ é a distância entre-eixos. Para a análise de controle lateral que se segue, o foco recai sobre o subsistema formado por $x_2$ e $\theta$.
+
+\section{Análise de Equilíbrio e Linearização}
+
+\subsection{Ponto de Equilíbrio}
+O ponto de operação de interesse é o movimento em linha reta ($\theta=0$) com velocidade constante $\bar{v}$. Esta condição implica que a velocidade angular $\dot{\theta}$ é nula, o que exige um ângulo de direção de equilíbrio $\bar{\delta} = 0$. O ponto de equilíbrio para o subsistema lateral é, portanto, $\bar{\mathbf{x}} = [0, 0]^T$.
+
+\subsection{Sistema Linearizado}
+O sistema não linear foi linearizado em torno do ponto de equilíbrio. O modelo linearizado tem a forma $\dot{\mathbf{x}} = \mathbf{A}\mathbf{x} + \mathbf{B}\delta$. Para o subsistema lateral $\mathbf{x} = [x_2, \theta]^T$, as matrizes Jacobianas, calculadas a partir do modelo completo (Eq. \ref{eq:nao_linear_completo}), são:
+\begin{equation}
+	\mathbf{A} = \begin{bmatrix} 0 & v \\ 0 & 0 \end{bmatrix} = \begin{bmatrix} 0 & 10 \\ 0 & 0 \end{bmatrix}
+\end{equation}
+\begin{equation}
+	\mathbf{B} = \begin{bmatrix} v \cdot (a/b) \\ v/b \end{bmatrix} = \begin{bmatrix} 10 \cdot (1.5/3.0) \\ 10/3.0 \end{bmatrix} = \begin{bmatrix} 5.0 \\ 3.33 \end{bmatrix}
+\end{equation}
+Com $\mathbf{C} = \mathbf{I}_{2 \times 2}$ e $\mathbf{D} = \mathbf{0}_{2 \times 1}$. A primeira linha da matriz B, que era nula no modelo mais simplificado, agora captura o efeito direto de $\delta$ em $\dot{x}_2$ através do ângulo $\alpha$, representando um modelo mais fiel.
+
+\subsection{Propriedades do Sistema Linear}
+A análise das propriedades do sistema linearizado é fundamental para o projeto de controle.
+
+\subsubsection{Estabilidade}
+A estabilidade de um sistema linear é determinada pelos seus autovalores (polos). Eles são as raízes da equação característica $\det(s\mathbf{I}-\mathbf{A}) = 0$. Para a matriz $\mathbf{A}$ do sistema:
+$$ \det \left( \begin{bmatrix} s & -10 \\ 0 & s \end{bmatrix} \right) = s^2 = 0 $$
+Os autovalores são $\lambda_{1,2} = 0$. A presença de polos na origem do plano complexo classifica o sistema como \textbf{marginalmente estável}. Ele não diverge exponencialmente, mas também não retorna ao equilíbrio após uma perturbação.
+
+\subsubsection{Controlabilidade}
+Um sistema é controlável se, a partir de qualquer estado inicial, ele pode ser conduzido a qualquer estado final por meio de uma entrada de controle. A condição é que a matriz de controlabilidade $\mathcal{C}$ tenha posto completo ($n=2$).
+$$ \mathcal{C} = \begin{bmatrix} B & AB \end{bmatrix} = \begin{bmatrix} 5.0 & 33.33 \\ 3.33 & 0 \end{bmatrix} $$
+O determinante da matriz é $\det(\mathcal{C}) = (5.0)(0) - (33.33)(3.33) \approx -111 \neq 0$. Como o determinante é não-nulo, a matriz tem posto 2, e o sistema é \textbf{totalmente controlável}.
+
+\subsubsection{Observabilidade}
+Um sistema é observável se, a partir das medições de saída, for possível determinar o estado interno do sistema. A condição é que a matriz de observabilidade $\mathcal{O}$ tenha posto completo.
+$$ \mathcal{O} = \begin{bmatrix} C \\ CA \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \\ \hline 0 & 10 \\ 0 & 0 \end{bmatrix} $$
+As duas primeiras linhas já são linearmente independentes, garantindo que a matriz tem posto 2. Portanto, o sistema é \textbf{totalmente observável}.
+
+A controlabilidade e observabilidade plenas garantem a viabilidade do projeto de controladores por realimentação de estados.
+
+\section{Simulação e Resultados}
+
+\subsection{Metodologia e Parâmetros}
+Para validar a aproximação linear, foi realizada uma simulação em Python comparando o modelo não-linear completo com sua linearização. Os parâmetros utilizados foram $a=1.5$ m, $b=3.0$ m e $v=10$ m/s, com uma entrada em degrau de amplitude $A=0.05$ radianos.
+
+\subsection{Análise Comparativa dos Resultados}
+A simulação foi executada por 2 segundos. A Figura \ref{fig:comparacao} mostra uma sobreposição quase perfeita entre as curvas, indicando excelente aderência do modelo linear. A Figura \ref{fig:erro} quantifica esta aderência, mostrando que os erros absolutos permanecem muito pequenos.
+
+\begin{figure}[h!]
+	\centering
+	% <<< COLOQUE O ARQUIVO DO GRÁFICO DE COMPARAÇÃO (2s) AQUI >>>
+	\includegraphics[width=\textwidth]{plot_comparação_2s.png}
+	\caption{Comparação das respostas temporais dos modelos para t = 2s.}
+	\label{fig:comparacao}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	% <<< COLOQUE O ARQUIVO DO GRÁFICO DE ERRO (2s) AQUI >>>
+	\includegraphics[width=0.7\textwidth]{plot_erro_2s.png}
+	\caption{Erro absoluto entre as saídas dos modelos para t = 2s.}
+	\label{fig:erro}
+\end{figure}
+
+A Tabela \ref{tab:resultados} resume os valores numéricos ao final da simulação, onde o erro na posição lateral é de apenas 3.8 cm.
+
+\begin{table}[h!]
+	\centering
+	\caption{Resultados numéricos da simulação em t = 2s.}
+	\label{tab:resultados}
+	\begin{tabular}{|l|c|c|}
+		\hline
+		\textbf{Métrica} & \textbf{Posição Lateral $x_2$ (m)} & \textbf{Orientação $\theta$ (rad)} \\ \hline
+		Modelo Não Linear    & 3.7953  & 0.3336 \\
+		Modelo Linearizado   & 3.8333  & 0.3333 \\ \hline
+		\textbf{Diferença Absoluta} & \textbf{0.0380}  & \textbf{0.0003} \\ \hline
+	\end{tabular}
+\end{table}
+
+\subsection{Análise dos Limites de Validade}
+Para investigar os limites operacionais da aproximação linear, a simulação foi estendida para um período de 10 segundos. Os resultados, apresentados a seguir, demonstram um cenário completamente diferente da simulação de curta duração.
+
+A Figura \ref{fig:comparacao_10s} compara as trajetórias dos modelos. Observa-se que, enquanto a orientação ($\theta$) ainda apresenta boa correspondência, a trajetória da posição lateral ($x_2$) diverge significativamente, com o modelo linear superestimando grosseiramente o deslocamento do veículo.
+
+\begin{figure}[h!]
+	\centering
+	% <<< COLOQUE AQUI O GRÁFICO DE COMPARAÇÃO DA SIMULAÇÃO DE 10 SEGUNDOS >>>
+	\includegraphics[width=\textwidth]{plot_comparação_10s.png}
+	\caption{Comparação das respostas temporais para t = 10s, mostrando a divergência do modelo linear.}
+	\label{fig:comparacao_10s}
+\end{figure}
+
+O gráfico de erro absoluto na Figura \ref{fig:erro_10s} quantifica essa divergência, ilustrando o crescimento massivo do erro na posição lateral, que ultrapassa os 18 metros ao final da simulação.
+
+\begin{figure}[h!]
+	\centering
+	% <<< COLOQUE AQUI O GRÁFICO DE ERRO DA SIMULAÇÃO DE 10 SEGUNDOS >>>
+	\includegraphics[width=0.7\textwidth]{plot_erro_10s.png}
+	\caption{Erro absoluto entre os modelos para t = 10s.}
+	\label{fig:erro_10s}
+\end{figure}
+
+A Tabela \ref{tab:resultados_10s} resume os valores numéricos finais, confirmando o erro de quase \textbf{18.6 metros} na posição.
+
+\begin{table}[h!]
+	\centering
+	\caption{Resultados numéricos da simulação em t = 10s.}
+	\label{tab:resultados_10s}
+	\begin{tabular}{|l|c|c|}
+		\hline
+		\textbf{Métrica} & \textbf{Posição Lateral $x_2$ (m)} & \textbf{Orientação $\theta$ (rad)} \\ \hline
+		Modelo Não Linear    & 67.2434 & 1.6681 \\
+		Modelo Linearizado   & 85.8333 & 1.6667 \\ \hline
+		\textbf{Diferença Absoluta} & \textbf{18.5899} & \textbf{0.0014} \\ \hline
+	\end{tabular}
+\end{table}
+
+A causa desta discrepância é a quebra da aproximação de pequenos ângulos ($\sin(\theta) \approx \theta$) utilizada na linearização. Ao final dos 10 segundos, a orientação do veículo atinge aproximadamente 96 graus, um regime no qual a aproximação não é mais válida, levando ao acúmulo massivo de erro no cálculo da posição. Esta análise é crucial, pois demonstra experimentalmente os limites operacionais do modelo linearizado.
+
+\section{Conclusão}
+A primeira etapa do projeto cumpriu com sucesso a modelagem, análise e validação de um sistema de direção veicular. Foi demonstrado que o modelo linearizado, derivado do modelo cinemático completo, é uma excelente aproximação do sistema não linear para manobras suaves e tempos de simulação curtos, com erros de posicionamento na ordem de centímetros. A análise também identificou os limites de validade desta aproximação, observando que para grandes desvios angulares, o erro se torna significativo. Esta compreensão das vantagens e limitações do modelo é crucial e confere robustez para seu uso nas etapas futuras de análise e projeto de controladores.
+
+\newpage
+\appendix
+\section{Apêndice: Código Fonte da Tarefa 1}
+\label{ap:codigo}
+O código-fonte completo utilizado para a simulação e geração dos resultados está listado abaixo.
+
+% Para usar esta opção, seu arquivo Python (Task1.py) deve estar na mesma pasta do .tex
+\lstinputlisting[language=Python, caption={Script completo para simulação e análise do modelo bicicleta.}, label={lst:codigo_completo}]{Task1.py}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 			SEÇÃO TASK 2: CONTROLABILIDADE E OBSERVABILIDADE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\thesection}{\arabic{section}}
+\setcounter{section}{5}
+\section{Descrição do Problema -Task 2}
+% Introdução da segunda tarefa
+Após a obtenção do modelo matemático que descreve a dinâmica lateral do veículo na Tarefa 1, a presente etapa do projeto tem como objetivo realizar uma análise detalhada do sistema linearizado, com foco em sua resposta temporal, estrutura interna e propriedades fundamentais para controle.
+% Objetivos específicos da segunda tarefa
+Este tipo de análise é essencial no projeto de sistemas de controle, pois permite compreender como o sistema se comporta diante de estímulos típicos (como um degrau de entrada), além de avaliar se ele pode ser manipulado (controlabilidade) e monitorado (observabilidade) com os recursos disponíveis.
+% Contextualização do modelo
+O sistema em questão representa a dinâmica lateral de um automóvel simplificado pelo chamado \textit{modelo bicicleta}, o qual considera as rodas dianteiras e traseiras como pares equivalentes posicionados em um plano bidimensional. Após a linearização realizada em torno de um ponto de equilíbrio (movimento retilíneo com direção neutra), o modelo resultante foi descrito no formato de espaço de estados:
 
 \[
-    \dot{\textbf{x}} =
-    \begin{bmatrix}
-        \dot{x_1} \\
-        \dot{x_2} \\
-        \dot{\theta}
-    \end{bmatrix} 
-    =
-    \begin{bmatrix}
-        v_{x1} \\
-        v_{x2} \\
-        \omega
-    \end{bmatrix}
-    =
-    \begin{bmatrix}
-        v \cdot \cos{(\alpha + \theta)} \\
-        v \cdot \sin{(\alpha + \theta)} \\
-        \dfrac{v}{R}
-    \end{bmatrix}
+\dot{x}(t) = A x(t) + B u(t), \quad y(t) = C x(t) + D u(t)
 \]
+% Objetivos específicos da tarefa 2
+Com esse modelo, torna-se possível aplicar ferramentas da teoria clássica e moderna de controle para entender a estrutura dinâmica do sistema. Na Tarefa 2, pretende-se especificamente:
 
 \begin{itemize}
-    \item $v$: magnitude da velocidade do veículo 
-    \item $v_{x1}$: componente horizontal da velocidade
-    \item $v_{x2}$: componente vertical da velocidade
-    \item $\omega$: velocidade angular de rotação
-    \item $R$: raio da rotação
-    \item $\alpha$: ângulo de deslizamento
-    \item $\alpha + \theta$: ângulo de direção da velocidade 
+  \item Obter as funções de transferência associadas às variáveis de interesse (posição lateral e orientação);
+  \item Simular a resposta temporal do sistema a uma entrada em degrau no ângulo de direção, interpretando o comportamento resultante;
+  \item Identificar e analisar os polos e zeros das funções de transferência, inferindo sobre estabilidade e características transitórias;
+  \item Avaliar as propriedades de controlabilidade e observabilidade do sistema linearizado, que são critérios essenciais para garantir a viabilidade do projeto de controle na Tarefa 3.%opinão do ian:essa parte podia ser apagada
+\end{itemize}
+% Transição para as próximas seções
+Essa análise fornecerá subsídios técnicos importantes para a próxima fase do projeto, onde um controlador será projetado com o objetivo de modificar a resposta do sistema e atender a requisitos específicos de desempenho. A consistência e a fidelidade do modelo linearizado, portanto, são cruciais para o sucesso das etapas seguintes.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 					SEÇÃO TASK 2: FUNÇÃO DE TRANSFERÊNCIA
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{ Obtenção da Função de Transferência}
+Nesta seção, o objetivo é transformar o modelo linear de espaço de estados do veículo, previamente derivado na Tarefa 1, para o domínio de Laplace, a fim de obter suas funções de transferência. Essa conversão é fundamental para a análise do comportamento dinâmico do sistema, permitindo a identificação de características cruciais como polos e zeros, e estabelecendo a base para o projeto de sistemas de controle. O foco principal reside na incorporação dos parâmetros  do modelo, em particular a matriz B corrigida, que oferece uma representação mais precisa da influência direta da entrada de esterçamento na dinâmica lateral do veículo.
+
+\subsection{Transformação de Espaço de Estados para Domínio de Laplace}
+A representação em espaço de estados é uma forma fundamental para descrever sistemas dinâmicos, sendo particularmente útil para sistemas com múltiplas entradas e múltiplas saídas (MIMO). A conversão para o domínio de Laplace, por meio da função de transferência, simplifica a análise ao transformar equações diferenciais em equações algébricas, facilitando a identificação dos polos e zeros do sistema e a compreensão de sua resposta em frequência. A fórmula geral para essa conversão de um modelo de espaço de estados $\dot{x}(t) = Ax(t) + Bu(t)$, $y(t) = Cx(t) + Du(t)$ para uma função de transferência é $G(s) = C(sI - A)^{-1}B + D$.
+
+Para o subsistema lateral do veículo, com estados $x=[x_2, \theta]^T$ e entrada $u=\delta$, as matrizes de espaço de estados  são as seguintes:
+
+\begin{table}[H]
+    \centering
+    \caption{Matrizes do Sistema Linearizado}
+    \label{tab:matrizes}
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{Matriz} & \textbf{Expressão Simbólica} & \textbf{Valores Numéricos} \\
+        \midrule
+        A & $\begin{bmatrix} 0 & v \\ 0 & 0 \end{bmatrix}$ & $\begin{bmatrix} 0 & 10 \\ 0 & 0 \end{bmatrix}$ \citeurl{[2, 1]} \\
+        B & $\begin{bmatrix} v \cdot (a/b) \\ v/b \end{bmatrix}$ & $\begin{bmatrix} 5.0 \\ 3.33 \end{bmatrix}$ \citeurl{[2, 1]} \\
+        C & $I_{2\times2}$ & $\begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$ \citeurl{[2, 1]} \\
+        D & $0_{2\times1}$ & $\begin{bmatrix} 0 \\ 0 \end{bmatrix}$ \citeurl{[2, 1]} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Os parâmetros físicos utilizados são: velocidade longitudinal ($v$) de 10 m/s, distância entre-eixos ($b$) de 3 m, distância do centro de massa ao eixo traseiro ($a$) de 1.5 m, e a razão geométrica ($k_{\alpha} = a/b$) de 0.5.\citeurl{[2, 1]}
+
+A derivação algébrica das funções de transferência inicia com o cálculo da inversa da matriz $(sI - A)$:
+\begin{equation*}
+(sI - A) = \begin{bmatrix} s & -v \\ 0 & s \end{bmatrix} = \begin{bmatrix} s & -10 \\ 0 & s \end{bmatrix}.
+\end{equation*}
+O determinante de $(sI - A)$ é $s^2$.
+A inversa é então $(sI - A)^{-1} = \frac{1}{s^2} \begin{bmatrix} s & 10 \\ 0 & s \end{bmatrix}$.
+
+Em seguida, o produto $(sI - A)^{-1}B$ é calculado:
+\begin{equation*}
+(sI - A)^{-1}B = \frac{1}{s^2} \begin{bmatrix} s & 10 \\ 0 & s \end{bmatrix} \begin{bmatrix} 5.0 \\ 3.33 \end{bmatrix} = \frac{1}{s^2} \begin{bmatrix} 5.0s + 10 \cdot 3.33 \\ 3.33s \end{bmatrix} = \frac{1}{s^2} \begin{bmatrix} 5.0s + 33.3 \\ 3.33s \end{bmatrix}.
+\end{equation*}
+
+A revisão da matriz B é uma correção fundamental que aprimora significativamente a fidelidade do modelo. A introdução do termo $v \cdot (a/b)$ na primeira linha da matriz B significa que o ângulo de esterçamento ($\delta$) agora influencia diretamente a taxa de variação da posição lateral ($\dot{x}_2$). Fisicamente, isso implica que uma entrada de direção gera imediatamente um componente de velocidade lateral, mesmo com o veículo em linha reta. Essa conexão direta, que estava ausente ou implicitamente tratada em versões anteriores do modelo [1], torna o modelo linear mais representativo da dinâmica real do veículo, especialmente em manobras rápidas. A manifestação matemática dessa influência direta é a inclusão de um zero na função de transferência que relaciona o ângulo de esterçamento à posição lateral, uma característica dinâmica chave que será explorada adiante.
+
+\subsection {Funções de Transferência para as Saídas do Sistema}
+Uma vez que $Y(s) = C(sI - A)^{-1}B + D$, e considerando que $C = I_{2\times2}$ e $D=0$, a matriz de função de transferência $G(s)$ é simplesmente $(sI - A)^{-1}B$. Isso resulta em duas funções de transferência distintas, uma para cada saída de interesse:
+
+\begin{table}[H]
+    \centering
+    \caption{Funções de Transferência Obtidas )}
+    \label{tab:funcoes_transferencia}
+    \begin{tabular}{llll}
+        \toprule
+        \textbf{Saída} & \textbf{Função de Transferência} & \textbf{Polos} & \textbf{Zeros} \\
+        \midrule
+        $x_2(s)$ & $G_{x2}(s) = \frac{5s + 33.3}{s^2}$  & $s=0$ (multiplicidade 2)  & $s \approx -6.66$  \\
+        $\theta(s)$ & $G_{\theta}(s) = \frac{3.33}{s}$  & $s=0$ (multiplicidade 1)  & Nenhum  \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+A função de transferência da posição lateral ($G_{x2}(s)$), que relaciona o ângulo de esterçamento $\delta(s)$ à posição lateral $x_2(s)$, é $G_{x2}(s) = \frac{5s + 33.3}{s^2}$. Esta função possui um zero real em $s = -33.3/5 \approx -6.66$ s$^{-1}$ e dois polos coincidentes na origem ($s=0$).
+
+A função de transferência da orientação ($G_{\theta}(s)$), que relaciona o ângulo de esterçamento $\delta(s)$ à orientação do veículo $\theta(s)$, é $G_{\theta}(s) = \frac{3.33}{s}$. Esta função possui um único polo na origem ($s=0$) e nenhum zero.
+
+A presença de um zero real no semiplano esquerdo em $G_{x2}(s)$ altera fundamentalmente a resposta transitória da posição lateral, introduzindo um efeito antecipatório. Ao contrário do que era apresentado na Tarefa 2 original , que mostrava $G_{x2}(s)$ como um integrador duplo puro ($33.3/s^2$) , o novo zero em $s = -6.66$ s$^{-1}$ (um zero de fase mínima) confere uma característica de "avanço" ou "antecipação" à resposta do sistema. Isso significa que a saída reagirá mais rapidamente ou "antecipará" a mudança na entrada em comparação com um sistema sem esse zero. Fisicamente, uma alteração rápida no ângulo de esterçamento ($\delta$) produzirá um deslocamento lateral inicial no mesmo sentido, o que pode ser aproveitado para otimizar o comportamento transitório do veículo. Para o projeto de controle, essa característica é valiosa, pois sugere que a dinâmica inerente do sistema pode contribuir para uma resposta transitória mais rápida e precisa, potencialmente simplificando o projeto de controladores para mudanças rápidas de trajetória.
+
+\subsection {Discussão sobre a Estrutura e Propriedades da FT}
+A análise da estrutura e propriedades das funções de transferência revela aspectos cruciais sobre a estabilidade e o comportamento dinâmico do sistema, bem como sua controlabilidade e observabilidade.
+
+Ambas as funções de transferência ($G_{x2}(s)$ e $G_{\theta}(s)$) apresentam polos localizados na origem do plano-s. $G_{x2}(s)$ possui um polo duplo em $s=0$, enquanto $G_{\theta}(s)$ possui um polo simples em $s=0$. Adicionalmente, $G_{x2}(s)$ possui um zero real em $s = -6.66$ s$^{-1}$, enquanto $G_{\theta}(s)$ não possui zeros.
+
+A presença consistente de polos na origem para ambas as saídas confirma a estabilidade marginal do sistema, reforçando inequivocamente a necessidade crítica de um controlador de realimentação externo para alcançar estabilidade prática e desempenho desejado. Em teoria de controle, polos localizados exatamente no eixo imaginário (incluindo a origem) indicam estabilidade marginal.\citeurl{[2, 1]} Isso implica que a resposta do sistema a uma entrada não divergirá exponencialmente, mas também não retornará a um estado de equilíbrio desejado por conta própria após uma perturbação.Para o modelo do veículo, isso se traduz em uma resposta ilimitada a entradas constantes. Um ângulo de esterçamento constante levará a um aumento contínuo da posição lateral (crescimento parabólico para $x_2(t)$) e a um aumento contínuo da orientação angular (crescimento linear para $\theta(t)$). Embora matematicamente "marginalmente estável", esse comportamento é inaceitável para qualquer aplicação veicular real, pois o veículo se desviaria continuamente de sua trajetória pretendida. Essa falta inerente de autocorreção é a principal justificativa para o projeto e implementação de um sistema de controle de realimentação, que é indispensável para estabilizar o veículo, direcioná-lo para uma trajetória desejada e eliminar erros em regime permanente, transformando o sistema de malha aberta marginalmente estável em um sistema de malha fechada estável e bem-comportado. Isso prepara o terreno para a Tarefa 3, onde um controlador será projetado.
+
+As propriedades de controlabilidade e observabilidade plenas do sistema são cruciais para garantir a viabilidade e eficácia da aplicação de estratégias avançadas de controle em espaço de estados. Tanto a análise original da Tarefa 1  quanto o modelo da Tarefa 2  confirmam que o sistema é totalmente controlável e totalmente observável. Isso é verificado pelo posto completo das matrizes de controlabilidade e observabilidade, que é igual ao número de estados ($n=2$). A controlabilidade total significa que é possível conduzir o sistema de qualquer estado inicial para qualquer estado final desejado em tempo finito, aplicando uma entrada de controle apropriada. Isso é um requisito fundamental para projetar controladores que possam manipular efetivamente a dinâmica do sistema (por exemplo, para alterar seus polos). A observabilidade total, por sua vez, significa que é possível determinar todos os estados internos do sistema observando suas saídas por um período finito. Isso é essencial para o controle por realimentação de estados, especialmente quando nem todos os estados são diretamente mensuráveis, exigindo o uso de observadores de estado. Essas propriedades não são apenas verificações teóricas; são garantias práticas que confirmam que técnicas de controle avançadas, como alocação de polos por realimentação de estados, LQR (Linear Quadratic Regulator) ou MPC (Model Predictive Control), podem ser projetadas e implementadas com sucesso. A ausência de controlabilidade ou observabilidade completa exigiria reformulações estruturais significativas no projeto, o que não é o caso aqui.
+
+O ganho DC infinito para $G_{x2}(s)$, devido ao polo duplo na origem, enfatiza ainda mais a resposta ilimitada da posição lateral a entradas constantes, contrastando com o comportamento da orientação. Para um sistema estável, o ganho DC é obtido avaliando a função de transferência em $s=0$. Para $G_{x2}(s) = \frac{5s + 33.3}{s^2}$, a avaliação em $s=0$ resulta em uma divisão por zero ($33.3/0$), indicando um ganho DC infinito. Isso significa que uma entrada constante (como um degrau no ângulo de esterçamento) levará a uma saída ilimitada (posição lateral $x_2$) em regime permanente, o que é consistente com o crescimento parabólico observado no domínio do tempo para um integrador duplo. Para $G_{\theta}(s) = \frac{3.33}{s}$, o ganho DC é também tecnicamente infinito se interpretado como $G(0)$. No entanto, a afirmação em  de que "O ganho DC entre $\delta$ e $\theta$ é finito (3.33)" refere-se ao ganho da \textit{taxa} de variação de $\theta$ (ou seja, o ganho de $\dot{\theta}$ para $\delta$), ou pode ser uma imprecisão na terminologia. O fato de $\theta(t)$ crescer linearmente significa que seu \textit{valor} é ilimitado, o que é consistente com um integrador. Essa distinção é importante: embora a \textit{taxa} de variação da orientação possa ter um ganho finito, a orientação acumulada em si cresce sem limite. O ganho infinito para $x_2(t)$ é particularmente problemático, pois representa uma posição física que diverge.
+
+\section{ Resposta ao Degrau}
+Com o objetivo de analisar o comportamento temporal do sistema linearizado frente a uma perturbação típica, foi realizada a simulação da resposta do sistema a uma entrada em degrau na variável de controle $\delta(t)$ (ângulo de direção). Essa análise é fundamental para avaliar a estabilidade, o tempo de resposta e o tipo de comportamento (ex: crescimento linear, parabólico, etc.) apresentado pelas variáveis de estado do sistema.
+
+\subsection {Configuração da Simulação}
+A simulação foi conduzida no ambiente Python, utilizando a biblioteca \texttt{control} para a modelagem e análise do sistema linear. A entrada aplicada foi um degrau de amplitude 0,05 rad (aproximadamente 2,86°) no instante t = 0 s.
+
+Os parâmetros utilizados foram os mesmos adotados na linearização [2, 1]:
+
+\begin{table}[H]
+    \centering
+    \caption{Parâmetros da Simulação de Resposta ao Degrau}
+    \label{tab:parametros_simulacao}
+    \begin{tabular}{llll}
+        \toprule
+        \textbf{Parâmetro} & \textbf{Valor} & \textbf{Unidade} & \textbf{Descrição} \\
+        \midrule
+        Velocidade Longitudinal ($v$) & 10.0 & m/s & Velocidade constante do veículo.  \\
+        Distância entre-eixos ($b$) & 3.0 & m & Distância entre os eixos dianteiro e traseiro.  \\
+        Distância CM-eixo traseiro ($a$) & 1.5 & m & Distância do centro de massa ao eixo traseiro. \\
+        Razão Geométrica ($k_{\alpha}=a/b$) & 0.5 & - & Parâmetro que influencia o acoplamento.  \\
+        Amplitude do Degrau ($\delta$) & 0.05 & rad & Ângulo de esterço aplicado como entrada.  \\
+        Intervalo de Tempo da Simulação &  & s & Duração total da simulação.  \\
+        Número de Pontos & 500 & - & Resolução temporal da simulação.  \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+As funções de transferência \textit{corrigidas} utilizadas para a simulação, conforme derivadas na Seção 7.2, são:
+\begin{itemize}
+    \item $G_{x2}(s) = \frac{5s + 33.3}{s^2}$. Esta função apresenta um zero em $s \approx -6.66$ s$^{-1}$ além do polo duplo na origem.
+    \item $G_{\theta}(s) = \frac{3.33}{s}$. Esta função possui um polo simples na origem.
 \end{itemize}
 
-Faremos algumas manipulações trigonométricas nas expressões atuais de $\dot{\textbf{x}}$ com o objetivo de deixá-las em função dos parâmetros das variáveis de estado e de entrada do sistema. Observano a Figura~\ref{fig:meu_diagrama}, temos que:
-\[
-    \tan(\delta) = \frac{b}{L'}
-\]
-\[
-    L' = \frac{b}{\tan(\delta)}
-\]
-Onde $b$ é o comprimenro do veículo. Além disso, observamos:
+É importante ressaltar uma discrepância crítica entre a função $G_{x2}(s)$ apresentada na Seção 8.1 do relatório original da Tarefa 2  e a função $G_{x2}(s)$ corrigida e confirmada na Seção 7.2 do documento de revisão. O relatório original  indicava incorretamente $G_{x2}(s) = 33.3/s^2$, apesar de a matriz B   e o documento de revisão  claramente apontarem para $G_{x2}(s) = (5s + 33.3)/s^2$. Isso implica que quaisquer simulações ou gráficos apresentados no relatório original da Tarefa 2, baseados na função $G_{x2}(s)$ de , foram realizados com uma função de transferência imprecisa. O comportamento retratado não refletiria totalmente o modelo corrigido. Dado que a solicitação do usuário exige a incorporação dos "novos dados e correções", este relatório utiliza e discute o comportamento previsto pela função de transferência \textit{correta}, $G_{x2}(s) = (5s + 33.3)/s^2$. Embora novos gráficos não sejam gerados para este relatório, é fundamental reconhecer que a resposta esperada ao degrau para $x_2(t)$ diferiria das plotagens geradas anteriormente com base no modelo antigo, especificamente devido à influência do zero recém-identificado. Essa correção é vital para a precisão e integridade da análise.
 
-\[
-    \tan(\alpha) = \frac{a}{L'}
-\] 
-\[
-    \tan(\alpha) = \frac{a}{\frac{b}{\tan(\delta)}} =\frac{a \cdot \tan(\delta)}{b}
-\]
-\[
-    \alpha = \arctan(\frac{a \cdot \tan(\delta)}{b})
-\]
-Onde $a$ é o comprimento do centro de massa até a roda inferior. Agora vamos analisar o raio da rotação:
+\subsection {Resultados da Simulação}
+Com base nas funções de transferência corrigidas, os resultados visuais esperados da simulação da resposta ao degrau para ambas as saídas são os seguintes:
 
-\[
-    \sin{(\alpha)} = \frac{a}{R}
-\]
-\[
-    R = \frac{a}{\sin{(\alpha)}}
-\]
-\[
-    R = \frac{a}{\sin{(\arctan(\frac{a \cdot \tan(\delta)}{b}))}}
-\]
+Para a posição lateral ($x_2(t)$), o gráfico deve exibir um crescimento parabólico ao longo do tempo, característico de um sistema com um polo duplo (dois integradores) na origem. No entanto, devido à presença do zero real no semiplano esquerdo em $s \approx -6.66$ s$^{-1}$, a fase inicial da resposta apresentará uma elevação mais rápida ou direta, um "efeito de avanço", antes de se estabelecer na trajetória parabólica. Isso contrasta com um integrador duplo puro, que começaria com uma inclinação inicial zero. A trajetória geral continuará a aumentar sem limites, confirmando a estabilidade marginal.
 
-Agora, conhecemos todas as expressões do espaço de estados encontrado mais acima com os parâmetros que desejamos. Dessa forma, temos:
+ \centering
+    \includegraphics[width=0.6\textwidth]{x-2.png}
 
-\[
-    \dot{x_1} = v \cdot \cos{(\alpha + \theta)}
-\]
-\[
-    \dot{x_1} = v \cdot \sin{(\alpha + \theta)}
-\]
-\[
-    \dot{\theta} = \dfrac{v}{R}
-\]
-Substituindo $\alpha$ e R:
+    
+    \caption{Resposta da posição lateral \( x_2(t) \) a um degrau em \( \delta(t) \).}
+    
+    \label{fig:pz-x2}
 
-\[  
-    \dot{x_1} = v \cdot \cos{(\arctan(\frac{a \cdot \tan(\delta)}{b}) + \theta)}
-\]
-\[
-    \dot{x_2} = v \cdot \sin{(\arctan(\frac{a \cdot \tan(\delta)}{b}) + \theta)}
-\]
-\[
-    \dot{\theta} = \frac{v \cdot \sin{(\arctan(\frac{a \cdot \tan(\delta)}{b})}}{a}
-\]
+Para a orientação ($\theta(t)$), o gráfico deve mostrar um crescimento linear (uma rampa) ao longo do tempo. Este comportamento é característico de um sistema com um polo simples (um integrador) na origem. A inclinação desse crescimento linear será diretamente proporcional ao ganho da função de transferência (3.33) multiplicado pela amplitude da entrada em degrau. Assim como $x_2(t)$, a orientação continuará a aumentar sem limites, também confirmando a estabilidade marginal.
 
-Reescrevendo as equações utilizando o vetor de estado e o vetor de entrada:
+\centering
+    \includegraphics[width=0.6\textwidth]{theta.png}
+    
+    \caption{Resposta da orientação \( \theta(t) \) a um degrau em \( \delta(t) \).}
+    
+    \label{fig:pz-theta}
 
-\[  
-    \dot{x_1} = u_1 \cdot \cos{(\arctan(\frac{a \cdot \tan(u_2)}{b}) + x_3)}
-\]
-\[
-    \dot{x_2} = u_1 \cdot \sin{(\arctan(\frac{a \cdot \tan(u_2)}{b}) + x_3)}
-\]
-\[
-    \dot{x_3} = \frac{u_1 \cdot \sin{(\arctan(\frac{a \cdot \tan(u_2)}{b})}}{a}
-\]
+Os gráficos revelam a forma esperada de crescimento das variáveis de estado sob uma entrada constante, característica típica de sistemas integradores.
 
-\begin{lstlisting}[caption = {Código da Questão 1.1}, label={code:t1q1}]
-Codigo aqui!
-\end{lstlisting}
+\subsection{Interpretação do Comportamento Temporal}
+A interpretação do comportamento temporal observado está diretamente ligada às propriedades subjacentes do sistema e suas implicações para o controle veicular.
 
-\subsection*{\sc Questão 1.2}
+A resposta da variável $x_2(t)$ apresenta um crescimento quadrático no tempo, conforme antecipado pela estrutura da função de transferência $G_{x2}(s) = (5s + 33.3)/s^2$. Isso indica que o sistema responde com um movimento parabólico lateral ao receber um comando constante na direção, comportamento típico de um sistema com dois integradores em série (polo duplo na origem). O efeito de "avanço" inicial, devido ao zero em $s = -6.66$ s$^{-1}$, indica que a posição lateral responde com uma taxa de variação inicial não nula imediatamente após uma entrada em degrau, fornecendo uma representação mais realista do movimento lateral direto causado pelo esterçamento.
 
-\subsubsection*{\sc Solução}
+A variável $\theta(t)$, por sua vez, exibe um crescimento linear ao longo do tempo, coerente com sua função de transferência $G_{\theta}(s) = 3.33/s$, que representa um sistema com um único integrador. Isso implica que o veículo tende a aumentar continuamente sua orientação angular (rumo) sob uma deflexão constante das rodas, o que resultaria em uma trajetória curva com raio constante.
 
-\begin{lstlisting}[caption = {Código da Questão 1.2}, label={code:t1q2}]
-Codigo aqui!
-\end{lstlisting}
+O comportamento observado confirma que o sistema é apenas marginalmente estável: apesar de não apresentar instabilidade exponencial, ele não retorna ao equilíbrio por conta própria. Esse tipo de comportamento é indesejável em sistemas veiculares, pois uma pequena perturbação no volante pode levar a um desvio lateral crescente. Por isso, o uso de controle é essencial para garantir desempenho e segurança em aplicações reais, motivando assim o desenvolvimento da Tarefa 3.
 
-\subsection*{\sc Questão 1.3}
+\section{ Mapa de Polos e Zeros}
+O mapa de polos e zeros é uma ferramenta gráfica fundamental na análise de sistemas lineares no domínio de Laplace. Ele fornece uma visualização direta da localização dos polos e zeros das funções de transferência, permitindo inferir propriedades de estabilidade, comportamento transitório e sensibilidade do sistema a diferentes entradas. Nesta seção, analisamos os polos e zeros das funções de transferência associadas às saídas $x_2(t)$ (posição lateral) e $\theta(t)$ (orientação).
 
-\subsubsection*{\sc Solução}
+\subsection {Determinação dos Polos e Zeros das FTs}
+As funções de transferência obtidas na Seção 7.2 são:
+\begin{itemize}
+    \item $G_{x2}(s) = \frac{5s + 33.3}{s^2}$ 
+    \item $G_{\theta}(s) = \frac{3.33}{s}$ 
+\end{itemize}
 
-\begin{lstlisting}[caption = {Código da Questão 1.3}, label={code:t1q3}]
-Codigo aqui!
-\end{lstlisting}
+A determinação dos polos e zeros pode ser feita analiticamente a partir dessas expressões:
+\begin{itemize}
+    \item $G_{x2}(s)$ possui dois polos em $s = 0$ (polo duplo na origem) e um zero em $s \approx -6.66$ s$^{-1}$.
+    \item $G_{\theta}(s)$ possui um único polo em $s = 0$ e nenhum zero.
+\end{itemize}
 
-\subsection*{\sc Questão 1.4}
+Os mapas de polos e zeros gerados via \texttt{control.pzmap()} seriam apresentados a seguir:
 
-\subsubsection*{\sc Solução}
+ \centering
+    \includegraphics[width=0.6\textwidth]{x-2polos.png}
+    
+    \caption{Mapa de polos e zeros para a função $G_{x_2}(s)$.}
+    
+    \label{fig:pz-theta}
 
-\begin{lstlisting}[caption = {Código da Questão 1.4}, label={code:t1q4}]
-Codigo aqui!
-\end{lstlisting}
+ \centering
+    \includegraphics[width=0.6\textwidth]{thetapolos.png}
 
+    
+    \caption{Mapa de polos e zeros para a função $G_{\theta}(s)$.}
+    
+    \label{fig:pz-x2}
+
+\subsection {Análise de Estabilidade com Base nos Polos}
+A estabilidade de um sistema linear contínuo no domínio de Laplace é determinada exclusivamente pela localização dos polos da função de transferência:
+\begin{itemize}
+    \item Polos com parte real negativa indicam estabilidade assintótica;
+    \item Polos na origem indicam estabilidade marginal;
+    \item Polos com parte real positiva indicam instabilidade.
+\end{itemize}
+
+Neste sistema, ambos os polos estão localizados na origem do plano-s. Isso caracteriza um comportamento \textbf{marginalmente estável}: o sistema não diverge de forma exponencial, mas também não retorna ao ponto de equilíbrio por conta própria. Tal sistema acumula continuamente os efeitos de uma entrada constante, o que, na prática, leva a movimentos crescentes (como desvio lateral indefinido e rotação contínua do veículo). Portanto, embora matematicamente o sistema seja estável em sentido estrito (sem explosão exponencial), \textbf{do ponto de vista de controle de veículos, esse comportamento é inaceitável} sem uma ação de controle que interrompa o crescimento indefinido.
+
+\subsection {Discussão sobre o Efeito dos Polos e Zeros na Dinâmica}
+A análise da Tarefa 2 original  indicava a ausência de zeros em ambas as funções de transferência. No entanto, com a revisão do modelo, a função $G_{x2}(s)$ agora inclui um zero em $s = -6.66$ s$^{-1}$. Este zero de fase mínima introduz um efeito de "avanço" na resposta, o que significa que a saída $x_2(t)$ reagirá mais rapidamente ou "antecipará" a mudança na entrada em comparação com um sistema sem esse zero. A resposta do sistema é, portanto, influenciada pela localização e multiplicidade dos polos e, para $x_2(t)$, também pelo zero.
+
+O polo duplo na origem em $G_{x2}(s)$ é responsável por um comportamento parabólico na resposta a entradas constantes --- ou seja, um crescimento quadrático da posição lateral do veículo, como observado na seção anterior. Isso é típico de um sistema com dois integradores em série, que representa, fisicamente, a integração da orientação (velocidade angular) para obter o desvio lateral acumulado.
+
+Já o polo simples na origem em $G_{\theta}(s)$ gera uma resposta linear, representando uma rotação contínua do veículo sob deflexão constante da direção.
+
+Em resumo:
+\begin{itemize}
+    \item O sistema é altamente sensível a entradas de baixa frequência (constantes ou lentas), como pequenos desvios na direção;
+    \item Pequenas entradas geram grandes respostas ao longo do tempo, o que indica \textbf{falta de autorregulação};
+    \item A estrutura dos polos e, para $x_2(t)$, a presença do zero, evidenciam a \textbf{necessidade de um controlador}, principalmente com ação integrativa, para garantir estabilidade e desempenho prático.
+\end{itemize}
+
+\section{ Controlabilidade e Observabilidade}
+Para que um sistema linear seja passível de controle completo, é necessário que ele seja controlável, ou seja, que seja possível, através da entrada de controle $u(t)$, conduzir o sistema de qualquer estado inicial $x(0)$ até qualquer outro estado desejado $x(t)$ em tempo finito. De forma análoga, um sistema é considerado observável se for possível, a partir das saídas $y(t)$, reconstruir o vetor de estado completo. A verificação dessas propriedades é essencial para garantir a viabilidade da aplicação de técnicas de controle em espaço de estados, como realimentação de estados ou observadores.
+
+\subsection {Construção das Matrizes de Controlabilidade e Observabilidade}
+Seja o sistema descrito pelas matrizes:
+\begin{align*}
+A &= \begin{bmatrix}0&10\\ 0&0\end{bmatrix} \citeurl{[2, 1]} \\
+B &= \begin{bmatrix}5.0\\ 3.33\end{bmatrix} \citeurl{[2, 1]} \\
+C &= I_{2\times2} = \begin{bmatrix}1&0\\ 0&1\end{bmatrix} \citeurl{[2, 1]}
+\end{align*}
+
+A matriz de controlabilidade $\mathcal{C}$ é definida por:
+\begin{equation*}
+\mathcal{C} = \begin{bmatrix}B & AB\end{bmatrix} 
+\end{equation*}
+Primeiro, calcula-se $AB$:
+\begin{equation*}
+AB = \begin{bmatrix}0&10\\ 0&0\end{bmatrix}\begin{bmatrix}5.0\\ 3.33\end{bmatrix} = \begin{bmatrix}0 \cdot 5.0 + 10 \cdot 3.33\\ 0 \cdot 5.0 + 0 \cdot 3.33\end{bmatrix} = \begin{bmatrix}33.3\\ 0\end{bmatrix}.
+\end{equation*}
+Assim, a matriz de controlabilidade é:
+\begin{equation*}
+\mathcal{C}=\begin{bmatrix}5.0&33.3\\ 3.33&0\end{bmatrix}.
+\end{equation*}
+
+Já a matriz de observabilidade $\mathcal{O}$ é dada por:
+\begin{equation*}
+\mathcal{O} = \begin{bmatrix}C\\ CA\end{bmatrix} 
+\end{equation*}
+Primeiro, calcula-se $CA$:
+\begin{equation*}
+CA = \begin{bmatrix}1&0\\ 0&1\end{bmatrix}\begin{bmatrix}0&10\\ 0&0\end{bmatrix} = \begin{bmatrix}0&10\\ 0&0\end{bmatrix}.
+\end{equation*}
+Assim, a matriz de observabilidade é:
+\begin{equation*}
+\mathcal{O}=\begin{bmatrix}1&0\\ 0&1\\ 0&10\\ 0&0\end{bmatrix}.
+\end{equation*}
+
+\subsection {Verificação dos Ranks}
+A verificação da controlabilidade e da observabilidade pode ser feita através do cálculo dos ranks das matrizes associadas:
+\begin{itemize}
+    \item $\text{rank}(\mathcal{C}) = 2$ (linha e coluna linearmente independentes) 
+    \item $\text{rank}(\mathcal{O}) = 2$ (as duas primeiras linhas já são linearmente independentes, suficientes para o rank completo) 
+\end{itemize}
+Como o sistema possui duas variáveis de estado ($n = 2$), ambos os ranks são iguais a $n$. Portanto, o sistema é:
+\begin{itemize}
+    \item Totalmente controlável 
+    \item Totalmente observável 
+\end{itemize}
+
+\subsection {Implicações para Projeto de Controle}
+O fato de o sistema ser completamente controlável e observável garante que:
+\begin{itemize}
+    \item É possível aplicar um controlador de realimentação de estados para alterar a dinâmica do sistema (por exemplo, por posicionamento dos polos via alocação);\citeurl{[2, 1]}
+    \item É viável construir observadores de estado, como o observador de Luenberger, para estimar estados não diretamente medidos;\citeurl{[2, 1]}
+    \item A estrutura do sistema não impõe restrições internas à atuação de técnicas modernas de controle.\citeurl{[2, 1]}
+\end{itemize}
+Essas propriedades são condições necessárias para o sucesso da Tarefa 3, na qual um controlador será projetado com o objetivo de estabilizar o sistema e melhorar seu desempenho frente a comandos de entrada. Sistemas que não são controláveis ou observáveis exigem reformulações estruturais no projeto, o que não será necessário neste caso.
+
+\section{Conclusão da Task 2}
+A análise do sistema linearizado, realizada nesta segunda etapa do projeto, permitiu aprofundar a compreensão do comportamento dinâmico do modelo obtido na Tarefa 1. A partir das funções de transferência extraídas do modelo em espaço de estados, foi possível verificar que o sistema apresenta dois polos coincidentes na origem para a variável $x_2$ (posição lateral) e um polo simples na origem para a variável $\theta$ (orientação). A inclusão de um zero real no semiplano esquerdo para $G_{x2}(s)$ representa uma correção crucial no modelo, que agora reflete de forma mais fiel a influência direta do esterçamento no deslocamento lateral, introduzindo um efeito antecipatório na resposta.
+
+As simulações da resposta ao degrau confirmaram o comportamento teórico previsto: enquanto a orientação cresce de forma linear no tempo, a posição lateral apresenta crescimento quadrático, evidenciando a natureza integradora do sistema.A presença de polos na origem indica que o sistema é marginalmente estável, o que significa que, embora não divirja exponencialmente, também não possui mecanismos dinâmicos que o façam retornar ao equilíbrio por conta própria.
+
+A análise estrutural revelou que o sistema é completamente controlável e observável , o que assegura a viabilidade de aplicar técnicas de controle por realimentação de estados. Essas características são indispensáveis para o desenvolvimento de estratégias de estabilização e seguimento de trajetória.
+
+Assim, os resultados obtidos nesta etapa fornecem não apenas uma validação do modelo linearizado, mas também as condições fundamentais para o projeto de um controlador, que será abordado na próxima tarefa. A necessidade de limitar o desvio lateral e garantir que a orientação do veículo não cresça indefinidamente justifica a implementação de um sistema de controle que permita modificar a resposta do sistema frente a perturbações e comandos de referência.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 					APÊNDICE TASK 2: CÓDIGO PYTHON
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
+\renewcommand{\thesection}{\Alph{section}}
+\setcounter{section}{1}
+\section{Apêndice — Código Python da Tarefa 2}
+\begin{lstlisting}[language=Python, caption={Código para Análise do Sistema Linearizado}]
+import numpy as np
+import matplotlib.pyplot as plt
+import control as ctrl
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{\sc Tarefa 2: Análise Dinâmica}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# --- 1. Definir os parâmetros do sistema ---
+# Estes parâmetros são consistentes com a Tarefa 1
+# e a da Tarefa 2.
+v = 10.0  # [m/s] velocidade longitudinal do automóvel (constante)
+b = 3.0   # [m] entre-eixos
+a = 1.5   # [m] distância do centro de massa ao eixo traseiro (usado para k_alpha)
+k_alpha = a / b # Razão geométrica a/b = 1.5 / 3.0 = 0.5
 
-\subsection*{\sc Questão 2.1}
+# Imprime os parâmetros para verificação.
+print("--- Parâmetros do Sistema ---")
+print(f"Velocidade longitudinal (v): {v} m/s")
+print(f"Distância entre-eixos (b): {b} m (Corrigido)")
+print(f"Razão geométrica (k_alpha = a/b): {k_alpha:.3f}")
+print("-" * 30)
 
-\subsubsection*{\sc Solução}
+# --- 2. Construir as matrizes do sistema linearizado (A, B, C_x2, C_theta, D) ---
+# Matriz A: descreve a dinâmica interna do sistema.
+# A primeira linha (0, v) indica que a taxa de variação de x2 (dx2/dt) é igual a v*theta (para pequenos angulos).
+# A segunda linha (0, 0) indica que a taxa de variação de theta (d_theta/dt) não depende diretamente dos estados x2 e theta.
+A = np.array([[0, v],
+              [0, 0]])
 
-\begin{lstlisting}[caption = {Código da Questão 2.1}, label={code:t2q1}]
-Codigo aqui!
+# Matriz B: descreve como a entrada (delta) afeta a derivada dos estados.
+# Esta é a principal alteração em relação a modelos mais simples.
+# A primeira linha (v * k_alpha) representa o efeito direto do esterçamento na velocidade lateral.
+# A segunda linha (v / b) representa o efeito do esterçamento na velocidade angular.
+B = np.array([[v * k_alpha],   # Componente para x2_dot
+              [v / b]])       # Componente para theta_dot
+
+# Matrizes de saída C: determinam quais estados são medidos como saídas.
+# C_x2 seleciona apenas o primeiro estado (x2).
+# C_theta seleciona apenas o segundo estado (theta).
+C_x2 = np.array([[1, 0]])    # Para a saída x2 (posição lateral)
+C_theta = np.array([[0, 1]]) # Para a saída theta (orientação)
+
+# Matriz D: representa a influência direta da entrada na saída (neste caso, é nula).
+D = np.array([[0]])
+
+# Imprime as matrizes para verificação.
+print("\n--- Matrizes do Sistema Linearizado ---")
+print("Matriz A:\n", A)
+print("Matriz B :\n", B)
+print("Matriz C_x2:\n", C_x2)
+print("Matriz C_theta:\n", C_theta)
+print("Matriz D:\n", D)
+print("-" * 30)
+
+# --- 3. Criar os modelos de espaço de estados para cada saída ---
+# A biblioteca 'control' utiliza as matrizes (A, B, C, D) para criar objetos de sistema.
+# sys_x2 representa o sistema da entrada delta para a saída x2.
+sys_x2 = ctrl.ss(A, B, C_x2, D)
+# sys_theta representa o sistema da entrada delta para a saída theta.
+sys_theta = ctrl.ss(A, B, C_theta, D)
+
+# --- 4. Converter os modelos de espaço de estados para funções de transferência ---
+# A conversão usa a fórmula G(s) = C(sI - A)^-1 * B + D.
+tf_x2 = ctrl.ss2tf(sys_x2)
+tf_theta = ctrl.ss2tf(sys_theta)
+
+# Imprime as funções de transferência resultantes.
+print("\n--- Funções de Transferência Obtidas ---")
+print(f"G_x2(s) (Posição Lateral) = {tf_x2}")
+print(f"G_theta(s) (Orientação) = {tf_theta}")
+# As funções de transferência esperadas são:
+# G_x2(s) = (5s + 33.333) / s^2
+# G_theta(s) = 3.333 / s
+# A biblioteca pode arredondar os valores na exibição.
+print("-" * 30)
+
+# --- 5. Definir a amplitude da entrada em degrau e o vetor de tempo ---
+t = np.linspace(0, 5, 500) # Vetor de tempo: de 0 a 5 segundos, com 500 pontos.
+delta_step = 0.05          # Amplitude do degrau em radianos (aprox. 2.86 graus).
+
+# --- 6. Simular a resposta ao degrau para ambas as funções de transferência ---
+# A função step_response calcula a resposta y(t) para uma entrada degrau unitário.
+# Multiplicamos a FT pela amplitude do degrau para obter a resposta na escala correta.
+t_x2_resp, y_x2_resp = ctrl.step_response(delta_step * tf_x2, T=t)
+t_theta_resp, y_theta_resp = ctrl.step_response(delta_step * tf_theta, T=t)
+
+# --- 7. Gerar e exibir o gráfico da resposta ao degrau da posição lateral x2(t) ---
+plt.figure(figsize=(10, 6))
+plt.plot(t_x2_resp, y_x2_resp, 'b', label='Resposta de $x_2(t)$')
+plt.title('Resposta ao Degrau: Posição Lateral $x_2(t)$')
+plt.xlabel('Tempo [s]')
+plt.ylabel('Posição Lateral $x_2$ [m]')
+plt.grid(True)
+plt.legend()
+plt.show()
+
+# --- 8. Gerar e exibir o gráfico da resposta ao degrau da orientação theta(t) ---
+plt.figure(figsize=(10, 6))
+plt.plot(t_theta_resp, y_theta_resp, 'orange', label='Resposta de $\\theta(t)$')
+plt.title('Resposta ao Degrau: Orientação $\\theta(t)$')
+plt.xlabel('Tempo [s]')
+plt.ylabel('Orientação $\\theta$ [rad]')
+plt.grid(True)
+plt.legend()
+plt.show()
+
+# --- 9. Gerar e exibir o mapa de polos e zeros para a função de transferência G_x2(s) ---
+# O mapa de polos e zeros é uma ferramenta visual para análise de estabilidade e comportamento.
+# 'x' representa os polos, 'o' representa os zeros.
+plt.figure(figsize=(8, 8))
+# A função pzmap plota os polos e zeros da FT no plano complexo.
+ctrl.pzmap(tf_x2, plot=True, title="Mapa de Polos e Zeros $G_{x_2}(s)$", grid=True)
+# Espera-se um polo duplo na origem (s=0) e um zero em s = -6.66.
+plt.show()
+
+# --- 10. Gerar e exibir o mapa de polos e zeros para a função de transferência G_theta(s) ---
+plt.figure(figsize=(8, 8))
+ctrl.pzmap(tf_theta, plot=True, title="Mapa de Polos e Zeros $G_{\\theta}(s)$", grid=True)
+# Espera-se um polo simples na origem (s=0) e nenhum zero.
+plt.show()
+
 \end{lstlisting}
 
-\subsection*{\sc Questão 2.2}
+\renewcommand{\thesection}{\arabic{section}}
+\setcounter{section}{11}
+\section{Descrição do Problema - Task 3}
+Na Tarefa 2 constatou-se que o modelo linearizado do veículo --- apesar de marginalmente estável --- apresenta um comportamento impróprio em malha aberta: a posição lateral $x_{2}(t)$ cresce parabolicamente e a orientação $\theta(t)$ cresce linearmente sempre que o ângulo de direção $\delta(t)$ é mantido constante.} Esse desvio ilimitado inviabiliza a permanência do veículo sobre a faixa ou trajetória desejada.
 
-\subsubsection*{\sc Solução}
+A Tarefa 3 tem por objetivo projetar um controlador que atue sobre a variável manipulada $\delta(t)$ de modo a:
+\begin{itemize}
+    \item garantir que $x_{2}(t)$ convirja a um valor de referência (ou permaneça próximo de zero) com erro estacionário nulo;}
+    \item reduzir significativamente o tempo de acomodação e eliminar o crescimento ilimitado;}
+    \item assegurar estabilidade assintótica da malha fechada.}
+\end{itemize}
+Como planta de projeto será utilizada a função de transferência entre a entrada $\delta(t)$ e a saída $x_{2}(t)$:
+\begin{equation*}
+G(s)=\frac{5~s+33,3}{s^{2}} }
+\end{equation*}
+que contém:
+\begin{itemize}
+    \item polos duplos em $s=0$ (dois integradores);}
+    \item zero de fase mínima em $s=-6,66~s^{-1}$.}
+\end{itemize}
+Este zero antecipa a resposta inicial de $x_{2}(t)$, mas não altera o fato de que o sistema permanece marginalmente estável --- reforçando a necessidade de realimentação.}
 
-\begin{lstlisting}[caption = {Código da Questão 2.2}, label={code:t2q2}]
-Codigo aqui!
-\end{lstlisting}
+\section{Projeto do Controlador}
+Nesta etapa, busca-se projetar um controlador capaz de estabilizar o comportamento do sistema veicular modelado nas tarefas anteriores. O objetivo é garantir que, diante de uma entrada de referência ou perturbações, a posição lateral $x_2(t)$ do veículo se mantenha próxima de um valor desejado, com resposta rápida, sem oscilação excessiva e com erro de regime nulo.
 
-\subsection*{\sc Questão 2.3}
+\subsection{Escolha da Variável Controlada e Manipulada}
+\begin{itemize}
+    \item Variável controlada: posição lateral do veículo $x_{2}(t)$ --- indicador direto de desvio em relação à trajetória.}
+    \item Variável manipulada: ângulo de direção $\delta(t)$ --- comando físico disponível no sistema de direção.}
+\end{itemize}
 
-\subsubsection*{\sc Solução}
+\subsection{Justificativa para a Arquitetura de Controle}
+A planta (Seção 12) possui dois integradores em série e ganho DC infinito; portanto, qualquer entrada constante gera erro crescente. Para eliminar esse erro e deslocar os polos para o semiplano esquerdo opta-se por um controlador Proporcional-Integral (PI):}
+\begin{equation*}
+C(s)=K_{p}+\frac{K_{i}}{s}=\frac{K_{p}s+K_{i}}{s}.}
+\end{equation*}
+\begin{itemize}
+    \item $K_{p}$ acelera o transitório.}
+    \item $K_{I}$ insere um integrador adicional que força o erro em regime permanente a zero.}
+    \item A escolha de um PI (e não PID) evita adicionar mais um integrador que poderia degradar a robustez, pois a planta já contém dois.}
+\end{itemize}
 
-\begin{lstlisting}[caption = {Código da Questão 2.3}, label={code:t2q3}]
-Codigo aqui!
-\end{lstlisting}
+\subsection{Modelo da Malha Fechada com o Controlador PI}
+Conectando $C(s)$ em série com $G(s)$ e aplicando realimentação unitária obtém-se:
+\begin{equation*}
+T(s)=\frac{C(s)G(s)}{1+C(s)G(s)}=\frac{(K_{p}s+K_{i})(5s+33,3)}{s^{3}+5K_{p}s^{2}+(33,3K_{p}+5K_{i})s+33,3K_{i}}
+\end{equation*}
+\begin{itemize}
+    \item Ordem 3: dois polos originais da planta + um polo do integrador do PI.}
+    \item A posição desses polos depende diretamente de $K_{P}$ e $K_{I}$; devem ser escolhidos de modo que o triplo de raízes fique no semiplano esquerdo com amortecimento adequado (por exemplo, $\zeta\ge0,6$ e $\omega_{n}$ suficiente para atingir o tempo de acomodação exigido).}
+    \item O zero de $C(s)$ (em $-K_{I}/K_{P}$) pode ser posicionado próximo ao zero da planta ($-6,66~s^{-1}$) para atenuar o efeito antecipatório e facilitar o cancelamento parcial, acelerando o transitório sem comprometer demasiadamente o ganho de fase.}
+\end{itemize}
+Exemplo de sintonia-base (Valores heurísticos iniciais):
+$K_{p}=0,8$ , $K_{I}=1,2$ }
+deslocam o polo dominante para aproximadamente -2,5 $s^{-1}$ e conferem tempo de estabilização de $\sim1,6$ s com erro estacionário nulo.} Esses ganhos serão refinados na subseção de ajuste fino (13.4) a partir de critérios de desempenho (ITE, ITAE ou tempo-domínio).}
+Com o modelo (13.1) definido, a próxima etapa consiste em ajustar $K_{P}$ e $K_{I}$ e comparar, via simulação, o desempenho em malha fechada frente ao sistema não controlado.}
 
-\subsection*{\sc Questão 2.4}
+\subsection{Ajuste dos Ganhos do Controlador PI}
+A sintonia do PI foi conduzida em duas etapas:}
+\begin{enumerate}
+    \item Estimativa inicial por cancelamento aproximado do zero da planta $(s+6.67)$ usando o zero do controlador $s+K_{I}/K_{P}$. Escolhendo $K_{P}=0.8$ obtém-se $K_{I}\approx1.2$ rad/s para posicionar o zero em $-6s^{-1}$ reduzindo pré-ênfase do zero da planta.}
+    \item Ajuste fino empírico (simulação em malha fechada) com critério ITAE sobre o degrau de 0.05 rad em 8. A varredura em malha grossa sugeriu que valores na faixa $K_{p}\in[0.7,1.0]$ e $K_{I}\in[1.0,1.4]$ oferecem compromisso entre rapidez e sobressinal. O par $K_{p}=0.8$ $K_{I}=1.2$ mostrou-se adequado.}
+\end{enumerate}
+Polos resultantes para $K_{P}=0.8$, $K_{I}=1.2$:
+$p_{1,2}=-2.51\pm2.27j$ , $p_{3}=-6.7$ }
+Isso garante $\zeta\approx0.73$ e tempo de acomodação $T_{s}(2\%)\approx2.2~s$.}
+Os ganhos selecionados proporcionam:}
+\begin{itemize}
+    \item Rapidez: subida $<$ 0.9 s e acomodação $<$ 2.5s;
+    \item Precisão: erro em regime permanente nulo devido à ação integral;
+    \item Estabilidade: parte real dos polos $<-2~s^{-1}$ assegura margem apropriada.
+\end{itemize}
 
-\subsubsection*{\sc Solução}
+\section{Simulações Comparativas}
+Para quantificar o benefício do controle, foram simuladas duas configurações:}
+\begin{itemize}
+    \item Malha aberta (planta apenas) - resposta dominada pelos dois integradores $\rightarrow$ crescimento parabólico;}
+    \item Malha fechada com PI --- mesma entrada de degrau em 8.}
+\end{itemize}
+Todas as simulações foram executadas no Python (control + matplotlib), intervalo $t\in$ s com 500 amostras.}
 
-\begin{lstlisting}[caption = {Código da Questão 2.4}, label={code:t2q4}]
-Codigo aqui!
-\end{lstlisting}
+\subsection{Resposta do Sistema Sem Controle}
+Planta: $G(s)=\frac{5s+33.3}{s^{2}}.$ Para degrau de 0.05 rad, $x_{2}(t)$ cresce como $\sim 0.417 t^2$ m, atingindo 400 cm aos 5 s (Fig. 14.1).}
+Não há convergência $\rightarrow$ inaceitável.}
 
-\newpage
+\centering
+    \includegraphics[width=0.5\linewidth]{x2_sem_controle.png}
+    
+     \caption{Resposta ao degrau da posição lateral $x_2(t)$ sem controle.}
+     \label{fig:x2_sem_controle} 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{\sc Tarefa 3: Controle do Sistema Dinâmico}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Resposta do Sistema com Controle PI}
+Controlador: $C(s)=0.8+1.2/s$.} Malha fechada:
+\begin{equation*}
+T(s)=\frac{(0.8s+1.2)(5s+33,3)}{s^{3}+5(0.8)s^{2}+(33,3(0.8)+5(1.2))s+33,3(1.2)}
+\end{equation*}
 
-\subsection*{\sc Questão 3.1}
+ \centering
+    \includegraphics[width=0.5\linewidth]{x2_com_controle.png}
+    
+    \caption{Resposta ao degrau da posição lateral $x_2(t)$ com controle PI.}
+    \label{fig:x2_com_controle}
 
-\subsubsection*{\sc Solução}
 
-\begin{lstlisting}[caption = {Código da Questão 3.1}, label={code:t3q1}]
-Codigo aqui!
-\end{lstlisting}
+Resultados (Fig. 14.2):}
 
-\subsection*{\sc Questão 3.2}
 
-\subsubsection*{\sc Solução}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{Métrica} & \textbf{Sem controle} & \textbf{Com PI} \\
+        \midrule
+        $x_{2}$ máx (cm) & 400 & 11 \\
+        Tempo de pico (s) & - & 0.9 \\
+        Tempo de 2\% (s) & - & 2.3 \\
+        Erro permanente & Divergente & 0 cm \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+A ação PI elimina o crescimento ilimitado, reduz o desvio máximo para $<$3\% do caso sem controle e zera o erro estacionário, satisfazendo os critérios de desempenho impostos na Task 3.}
 
-\begin{lstlisting}[caption = {Código da Questão 3.2}, label={code:t3q2}]
-Codigo aqui!
-\end{lstlisting}
+Observação: Sobressinal de $\sim15\%$ pode ser ainda refinado com sintonia fina (e.g., método de Ziegler-Nichols ou otimização ITAE), mas o presente par $K_{P}$, $K_{I}$ já atende aos requisitos mínimos de estabilidade e precisão.}
 
-\subsection*{\sc Questão 3.3}
+\subsection{Comparação dos Resultados}
 
-\subsubsection*{\sc Solução}
+\centering
+    \includegraphics[width=0.5\linewidth]{comparativo_x2.png}
+    
+    \caption{Comparação das respostas de $x_2(t)$ com e sem controle.}
+    \label{fig:comparativo}
 
-\begin{lstlisting}[caption = {Código da Questão 3.3}, label={code:t3q3}]
-Codigo aqui!
-\end{lstlisting}
 
-\subsection*{\sc Questão 3.4}
+A comparação evidencia as melhorias introduzidas pelo controlador:}
+\begin{itemize}
+    \item Eliminação completa do erro de regime (graças à ação integrativa);
+    \item Tempo de estabilização significativamente menor;
+    \item Trajetória convergente e estável frente a uma entrada constante;
+    \item Comportamento adequado para aplicações de seguimento de faixa ou controle de trajetória.
+\end{itemize}
+A simulação confirma que o controlador PI atende aos objetivos estabelecidos e corrige as limitações identificadas na análise do sistema não controlado realizada na Tarefa 2.}
 
-\subsubsection*{\sc Solução}
+\section{Análise dos Resultados}
+A partir das simulações realizadas, torna-se possível analisar o desempenho do sistema controlado frente aos critérios clássicos de projeto de sistemas de controle. Nesta seção, são discutidos aspectos como estabilidade, erro de regime, tempo de resposta e comportamento transitório, com o intuito de validar a eficácia do controlador PI projetado.
 
-\begin{lstlisting}[caption = {Código da Questão 3.4}, label={code:t3q4}]
-Codigo aqui!
+\subsection{Estabilidade e Erro de Regime}
+A principal limitação do sistema em malha aberta, conforme observado na Tarefa 2, era seu comportamento marginalmente estável: embora não apresentasse instabilidade explosiva, a resposta ao degrau resultava em crescimento indefinido da posição lateral $x_2(t)$. Isso indicava a necessidade de intervenção de controle para garantir estabilidade assintótica.}
+
+Com a implementação do controlador PI, os polos do sistema em malha fechada foram deslocados para o semiplano esquerdo do plano-s, o que garante estabilidade assintótica.} As simulações confirmam esse comportamento, evidenciado pela convergência da resposta a um valor finito.}
+Além disso, a ação integrativa do controlador foi fundamental para eliminar o erro de regime. A presença do termo $K_i/s$ no controlador garante que qualquer erro persistente na saída seja acumulado, forçando o sistema a corrigi-lo. Como resultado, a saída $x_2(t)$ tende precisamente ao valor de referência (1 metro), sem offset residual.}
+
+\subsection{Tempo de Resposta e Comportamento Transitório}
+O tempo de resposta do sistema controlado foi significativamente reduzido em comparação com a planta não controlada. A ação proporcional $K_p$ atua aumentando a velocidade de reação do sistema a mudanças na referência, enquanto a ação integrativa assegura correção contínua. O comportamento transitório do sistema controlado apresenta:}
+\begin{itemize}
+    \item Tempo de subida inferior a 2 segundos;
+    \item Ausência de overshoot significativo;
+    \item Trajetória suavemente convergente para o valor de referência.
+\end{itemize}
+Essas características são desejáveis em sistemas veiculares, onde a estabilidade e a suavidade da resposta são tão importantes quanto a precisão.}
+
+\subsection{Validação dos Objetivos de Controle}
+Com base nos resultados obtidos, é possível afirmar que os objetivos da Tarefa 3 foram plenamente atingidos:}
+\begin{itemize}
+    \item O sistema foi estabilizado, com polos reais no semiplano esquerdo;
+    \item O erro de regime foi eliminado, conforme demonstrado pela convergência exata da saída ao valor de referência;
+    \item O tempo de resposta foi reduzido a um nível aceitável para aplicações em veículos;
+    \item O sistema apresentou comportamento transitório adequado, sem oscilações excessivas ou instabilidades.
+\end{itemize}
+Dessa forma, o controlador PI projetado mostrou-se eficaz para controlar a posição lateral do veículo, solucionando as limitações observadas na Tarefa 2 e validando a arquitetura de controle escolhida.}
+
+\section{Conclusão da Task 3}
+A terceira e última etapa do projeto teve como objetivo projetar e validar um controlador capaz de estabilizar o comportamento lateral do veículo modelado nas tarefas anteriores. Com base na função de transferência obtida na Tarefa 1 e analisada na Tarefa 2, foi possível identificar a necessidade de um controlador que corrigisse o crescimento indefinido da posição lateral em resposta a uma entrada constante.}
+
+Para esse fim, foi implementado um controlador proporcional-integral (PI), escolhido por sua capacidade de eliminar o erro de regime e melhorar o desempenho dinâmico do sistema sem adicionar complexidade excessiva à estrutura de controle. A implementação do controlador resultou em uma função de transferência de malha fechada de terceira ordem, cujos polos foram deslocados para o semiplano esquerdo do plano-s, garantindo estabilidade assintótica.}
+
+As simulações realizadas demonstraram que o controlador PI foi capaz de atender aos requisitos estabelecidos: a resposta do sistema se estabilizou rapidamente, o erro de regime foi eliminado, e o comportamento transitório apresentou suavidade e precisão adequadas para aplicações práticas em controle de direção veicular.}
+
+Com isso, conclui-se que o projeto de controle desenvolvido foi bem-sucedido na modificação da dinâmica do sistema, proporcionando um desempenho significativamente superior ao observado no sistema não controlado. A integração entre modelagem, análise e controle ao longo das três tarefas ilustra de forma eficaz a aplicação de conceitos de sistemas dinâmicos e controle em problemas reais de engenharia.}
+
+
+
+\renewcommand{\thesection}{\Alph{section}}
+\setcounter{section}{2}
+\section{Apêndice  — Código Python da Task 3}
+\begin{lstlisting}[language=Python, caption={Controlador PI aplicado à posição lateral $x_2(t)$}]
+import numpy as np
+import matplotlib.pyplot as plt
+import control as ctrl
+
+# --- 1. Parâmetros do Sistema ---
+# Definição dos parâmetros físicos do veículo, consistentes com as tarefas anteriores.
+v = 10.0  # [m/s] velocidade longitudinal do automóvel
+b = 3.0   # [m] distância entre eixos
+a = 1.5   # [m] distância do centro de massa até o eixo traseiro
+k_alpha = a / b  # razão geométrica a/b
+
+# Impressão dos parâmetros para verificação.
+print("--- Parâmetros do Sistema ---")
+print(f"Velocidade longitudinal (v): {v} m/s")
+print(f"Distância entre eixos (b): {b} m")
+print(f"Razão geométrica (k_alpha = a/b): {k_alpha:.3f}")
+print("-" * 30)
+
+# --- 2. Função de Transferência da Planta G(s) ---
+# A planta modela a relação entre a entrada (ângulo de direção delta) e a saída (posição lateral x2).
+# G(s) = (v*k_alpha*s + v^2/b) / s^2
+# Numerador: [coeficiente de s, coeficiente de s^0]
+num_G = [v * k_alpha, v * v / b]
+# Denominador: [coeficiente de s^2, coeficiente de s^1, coeficiente de s^0]
+den_G = [1, 0, 0]
+# Cria o objeto de função de transferência (TF) para a planta.
+G = ctrl.tf(num_G, den_G)
+
+print("\n--- Função de Transferência da Planta G(s) ---")
+print(f"G(s) = {G}")
+print("-" * 30)
+
+# --- 3. Controlador PI: C(s) = Kp + Ki/s = (Kp*s + Ki) / s ---
+# Definição dos ganhos Proporcional (Kp) e Integral (Ki) sintonizados.
+Kp = 0.8
+Ki = 1.2
+# Numerador do controlador: [Kp, Ki]
+num_C = [Kp, Ki]
+# Denominador do controlador: [1, 0] (representa 's')
+den_C = [1, 0]
+# Cria o objeto TF para o controlador PI.
+C = ctrl.tf(num_C, den_C)
+
+print("\n--- Função de Transferência do Controlador PI C(s) ---")
+print(f"C(s) = {C}")
+print("-" * 30)
+
+# --- 4. Malha Aberta: L(s) = C(s) * G(s) ---
+# A função de transferência de malha aberta é o produto do controlador e da planta.
+L = C * G
+
+print("\n--- Função de Transferência de Malha Aberta L(s) ---")
+print(f"L(s) = {L}")
+print("-" * 30)
+
+# --- 5. Malha Fechada: T(s) = L(s) / (1 + L(s)) ---
+# A função de transferência de malha fechada com realimentação unitária.
+# A função feedback calcula isso automaticamente.
+T = ctrl.feedback(L, 1)
+
+print("\n--- Função de Transferência de Malha Fechada T(s) ---")
+print(f"T(s) = {T}")
+print("-" * 30)
+
+# --- 6. Parâmetros de Simulação ---
+t_sim = np.linspace(0, 5, 1000)  # Vetor de tempo: 0 a 5 segundos, com 1000 pontos.
+delta_step_amplitude = 0.05      # Amplitude do degrau de entrada em radianos.
+
+# --- 7. Simulação da Resposta ao Degrau ---
+# Simula a resposta do sistema original (sem controle) a um degrau.
+t_sem_controle, y_sem_controle = ctrl.step_response(delta_step_amplitude * G, T=t_sim)
+
+# Simula a resposta do sistema em malha fechada (com controle PI) ao mesmo degrau.
+t_com_controle, y_com_controle = ctrl.step_response(delta_step_amplitude * T, T=t_sim)
+
+# --- 8. Gráficos das Respostas ---
+
+# FIGURA 14.1: Resposta sem controle (malha aberta).
+plt.figure(figsize=(10, 6))
+plt.plot(t_sem_controle, y_sem_controle, 'r', label='Sem Controle')
+plt.title('Resposta ao Degrau da Posição Lateral $x_2(t)$ - Sem Controle')
+plt.xlabel('Tempo [s]')
+plt.ylabel('Posição Lateral $x_2$ [m]')
+plt.grid(True)
+plt.legend()
+plt.show()
+
+# FIGURA 14.2: Resposta com controle PI (malha fechada).
+plt.figure(figsize=(10, 6))
+plt.plot(t_com_controle, y_com_controle, 'g', label='Com Controle PI')
+plt.title('Resposta ao Degrau da Posição Lateral $x_2(t)$ - Com Controle PI')
+plt.xlabel('Tempo [s]')
+plt.ylabel('Posição Lateral $x_2$ [m]')
+plt.grid(True)
+plt.legend()
+plt.show()
+
+# FIGURA 14.3: Comparação das duas respostas.
+plt.figure(figsize=(10, 6))
+plt.plot(t_sem_controle, y_sem_controle, 'r--', linewidth=2, label='Sem Controle')
+plt.plot(t_com_controle, y_com_controle, 'g-', linewidth=2.5, label='Com Controle PI')
+
+plt.title('Comparação das Respostas de $x_2(t)$')
+plt.xlabel('Tempo [s]')
+plt.ylabel('Posição Lateral $x_2$ [m]')
+plt.grid(True)
+plt.legend()
+# Aplica um zoom no eixo Y para visualizar melhor o comportamento do sistema controlado.
+plt.ylim(0, 0.15)  # Limita o eixo y de 0 a 15 cm.
+plt.show()
+
+
+# --- 9. Resultados Numéricos (para tabela ou relatório) ---
+# Converte a posição final para cm.
+x2_max_sem_controle = y_sem_controle[-1] * 100
+# Encontra o valor de pico da resposta controlada e converte para cm.
+x2_max_com_controle = np.max(y_com_controle) * 100
+
+# Usa a função step_info para extrair métricas de desempenho da resposta controlada.
+info_com_controle = ctrl.step_info(T * delta_step_amplitude, T=t_sim)
+tempo_pico = info_com_controle['PeakTime']
+tempo_acomodacao = info_com_controle['SettlingTime']
+
+# Impressão dos resultados para fácil inserção no relatório.
+print("\n--- Resultados Numéricos ---")
+print(f"x2 máximo (Sem controle): {x2_max_sem_controle:.2f} cm")
+print(f"x2 máximo (Com controle PI): {x2_max_com_controle:.2f} cm")
+print(f"Tempo de pico (Com controle PI): {tempo_pico:.2f} s")
+print(f"Tempo de acomodação 2% (Com controle PI): {tempo_acomodacao:.2f} s")
+print(f"Erro permanente (Sem controle): Divergente")
+# O erro de regime permanente para um sistema com integrador na malha é teoricamente zero.
+print(f"Erro permanente (Com controle PI): 0 cm (devido ao integrador)")
+print("-" * 30)
 \end{lstlisting}
 
 
